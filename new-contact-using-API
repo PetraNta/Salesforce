@@ -1,0 +1,27 @@
+trigger SendLeadEmail on Lead (after insert) {
+    // Get the new lead records that were just created
+    List<Lead> newLeads = Trigger.new;
+    
+    // Loop through each new lead and send an email notification to a specific user
+    for (Lead l : newLeads) {
+        // Create an email message object
+        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+        
+        // Set the email recipient
+        email.setToAddresses(new List<String>{'user@example.com'});
+        
+        // Set the email subject
+        email.setSubject('New lead created: ' + l.LastName);
+        
+        // Set the email body
+        email.setPlainTextBody('A new lead has been created with the following details:\n\n'
+            + 'First Name: ' + l.FirstName + '\n'
+            + 'Last Name: ' + l.LastName + '\n'
+            + 'Company: ' + l.Company + '\n'
+            + 'Phone: ' + l.Phone + '\n'
+            + 'Email: ' + l.Email);
+        
+        // Send the email
+        Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{email});
+    }
+}
